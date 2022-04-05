@@ -1,5 +1,10 @@
 fn main() {
     structures();
+    enums();
+    type_aliases();
+    use_use();
+    linked_list();
+    consts();
 }
 
 fn structures() {
@@ -83,4 +88,172 @@ fn structures() {
     }
 
     println!("square() {:?}", square(Point { x: 1.0, y: 2.0 }, 0.2));
+}
+
+fn enums() {
+    m();
+
+    enum WebEvent {
+        PageLoad,
+        PageUnload,
+        KeyPress(char),
+        Paste(String),
+        Click { x: i64, y: i64 },
+    }
+
+    fn inspect(event: WebEvent) {
+        match event {
+            WebEvent::PageLoad => println!("page load"),
+            WebEvent::PageUnload => println!("page unload"),
+            WebEvent::KeyPress(c) => println!("pressed '{}'", c),
+            WebEvent::Paste(s) => println!("pasted '{}'", s),
+            WebEvent::Click { x, y } => println!("clicked at x {}, y {}", x, y),
+        }
+    }
+
+    fn m() {
+        let pressed = WebEvent::KeyPress('x');
+        inspect(pressed);
+
+        // let my_text = String::from("my text");
+        // let pasted = WebEvent::Paste(my_text);
+        let pasted = WebEvent::Paste("my text".to_owned());
+        inspect(pasted);
+
+        let clicked = WebEvent::Click { x: 20, y: 30 };
+        inspect(clicked);
+
+        let load = WebEvent::PageLoad;
+        inspect(load);
+
+        let unload = WebEvent::PageUnload;
+        inspect(unload);
+    }
+}
+
+fn type_aliases() {
+    enum VeryVerboseEnumOfThingsToDoWithNumbers {
+        Add,
+        Subtract,
+    }
+
+    type Operations = VeryVerboseEnumOfThingsToDoWithNumbers;
+
+    let verbose_add = VeryVerboseEnumOfThingsToDoWithNumbers::Add;
+    let operations_add = Operations::Add;
+    let verbose_substract = VeryVerboseEnumOfThingsToDoWithNumbers::Subtract;
+    let operations_substract = Operations::Subtract;
+
+    impl VeryVerboseEnumOfThingsToDoWithNumbers {
+        fn run(&self, x: i32, y: i32) -> i32 {
+            match self {
+                Self::Add => x + y,
+                Self::Subtract => x - y,
+            }
+        }
+    }
+
+    println!("verbose_add.run: {}", verbose_add.run(2, 2));
+    println!("operations_add.run: {}", operations_add.run(3, 2));
+    println!("verbose_substract.run: {}", verbose_substract.run(3, 2));
+}
+
+fn use_use() {
+    m();
+
+    enum Status {
+        Rich,
+        Poor,
+    }
+
+    enum Work {
+        Civilian,
+        Soldier,
+    }
+
+    fn m() {
+        use Status::{Poor, Rich};
+        use Work::*;
+
+        let status = Poor;
+        let status_poor_origin_use = Status::Poor;
+        let civilian = Civilian;
+        let vibilian_origin = Work::Civilian;
+
+        match status {
+            Poor => println!("The poor guy has no money"),
+            Rich => println!("The rich guy has a lot of money"),
+        }
+
+        match civilian {
+            Civilian => println!("Civilians work!"),
+            Soldier => println!("Soldiers fight!"),
+        }
+    }
+}
+
+fn linked_list() {
+    m();
+
+    // use List::*;
+
+    enum List {
+        Cons(u32, Box<List>),
+        Nil,
+    }
+
+    impl List {
+        fn new() -> List {
+            List::Nil
+        }
+
+        fn prepend(self, element: u32) -> List {
+            List::Cons(element, Box::new(self))
+        }
+
+        fn len(&self) -> u32 {
+            match *self {
+                List::Cons(_, ref tail) => 1 + tail.len(),
+                List::Nil => 0,
+            }
+        }
+
+        fn stringify(&self) -> String {
+            match *self {
+                List::Cons(head, ref tail) => {
+                    format!("{}, {}", head, tail.stringify())
+                }
+                List::Nil => {
+                    format!("Nil")
+                }
+            }
+        }
+    }
+
+    fn m() {
+        let mut list = List::new();
+
+        list = list.prepend(1);
+        list = list.prepend(2);
+        list = list.prepend(3);
+
+        println!("linked_list has length: {}", list.len());
+        println!("{}", list.stringify());
+    }
+}
+
+static LANGUAGE: &'static str = "Rust";
+const THRESHOLD: i32 = 10;
+fn consts() {
+    let n = 16;
+    fn is_big(n: i32) -> bool {
+        n > THRESHOLD
+    }
+
+    println!("This is {}", LANGUAGE);
+    println!("The threshold is {}", THRESHOLD);
+    println!("{} is {}", n, if is_big(n) { "Big" } else { "Small" });
+
+    // const cannot modify
+    // THRESHOLD = 4;
 }
