@@ -11,6 +11,8 @@ fn main() {
     match_example();
     match_destructure();
     structs();
+    guards();
+    binding();
 }
 
 fn if_else() {
@@ -295,4 +297,43 @@ fn structs() {
     println!("y {}", y);
 
     // let Foo { y } = foo; // error: missing field x
+}
+
+fn guards() {
+    let pair = (3, 3);
+    println!("Tell me about {:?}", pair);
+
+    match pair {
+        (a, b) if a == b => println!("These are twins"),
+        (a, b) if a + b == 0 => println!("Antimatter, kaboom!"),
+        (a, b) if a % 2 == 1 => println!("The first one is odd"),
+        _ => println!("No correlation..."),
+    }
+}
+
+fn binding() {
+    fn age() -> u32 {
+        15
+    }
+
+    println!("tell me what type of person you are");
+
+    match age() {
+        0 => println!("haven't celebrated my first birthday yet"),
+        n @ 1..=12 => println!("i am a child of age {}", n),
+        n @ 13..=19 => println!("i am a teen of age {}", n),
+        n => println!("i am a elder of age {}", n),
+    }
+
+    fn some_number() -> Option<u32> {
+        Some(41)
+    }
+
+    println!("match with Option");
+
+    match some_number() {
+        Some(n @ 42) => println!("The answer: {}", n),
+        Some(n) => println!("not interesting in {}", n),
+        _ => (),
+    }
 }
