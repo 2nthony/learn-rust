@@ -13,6 +13,7 @@ fn main() {
     structs();
     guards();
     binding();
+    if_let();
 }
 
 fn if_else() {
@@ -335,5 +336,68 @@ fn binding() {
         Some(n @ 42) => println!("The answer: {}", n),
         Some(n) => println!("not interesting in {}", n),
         _ => (),
+    }
+}
+
+fn if_let() {
+    let optional = Some(7);
+
+    match optional {
+        Some(i) => {
+            println!("long string and {:?}", i)
+        }
+        _ => {}
+    }
+
+    if let Some(i) = optional {
+        println!("Matched {:?}!", i);
+    }
+
+    let letter: Option<i32> = None;
+    if let Some(i) = letter {
+        println!("letter matched {:?}", i)
+    } else {
+        println!("letter did not matched")
+    }
+
+    let emotion: Option<i32> = None;
+    let i_like_letters = false;
+    if let Some(i) = emotion {
+        println!("emotion matched {:?}", i)
+    } else if i_like_letters {
+        println!("emotion did not matched a number")
+    } else {
+        println!("emotion did not matched")
+    }
+
+    enum Foo {
+        Bar,
+        Baz,
+        Qux(u32),
+    }
+
+    let a = Foo::Bar;
+    let b = Foo::Baz;
+    let c = Foo::Qux(22);
+
+    if let Foo::Bar = a {
+        println!("a is foobar");
+    }
+    // wont work, cuz did not match
+    if let Foo::Bar = b {
+        println!("b is foobar");
+    }
+    if let Foo::Baz = b {
+        println!("b is foobaz");
+    }
+    if let Foo::Qux(v) = c {
+        println!("c is {}", v);
+    }
+
+    // practice
+    // ...
+    // if Foo::Bar == a {
+    if let Foo::Bar = a {
+        println!("a is foobar");
     }
 }
