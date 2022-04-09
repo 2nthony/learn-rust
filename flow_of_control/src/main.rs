@@ -14,6 +14,7 @@ fn main() {
     guards();
     binding();
     if_let();
+    while_let();
 }
 
 fn if_else() {
@@ -399,5 +400,37 @@ fn if_let() {
     // if Foo::Bar == a {
     if let Foo::Bar = a {
         println!("a is foobar");
+    }
+}
+
+fn while_let() {
+    let mut optional = Some(0);
+
+    // loop {
+    //     match optional {
+    //         Some(i) => {
+    //             if i > 9 {
+    //                 println!("Greater than 9, quit");
+    //                 optional = None;
+    //             } else {
+    //                 println!("i is {:?}", i);
+    //                 optional = Some(i + 1);
+    //             }
+    //         }
+    //         // why always this?!
+    //         _ => {
+    //             break;
+    //         }
+    //     }
+    // }
+
+    while let Some(i) = optional {
+        if i > 9 {
+            println!("Greater than 9, quit");
+            optional = None;
+        } else {
+            println!("i is {}", i);
+            optional = Some(i + 1);
+        }
     }
 }
