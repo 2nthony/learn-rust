@@ -1,6 +1,7 @@
 fn main() {
     are_you_on_linux();
 
+    // rustc --cfg some_condition main.rs
     conditional_function();
 }
 
