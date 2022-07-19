@@ -6,6 +6,10 @@ fn main() {
     a2();
     a3();
     a4();
+    a5();
+    a6();
+    a7();
+    a8();
 }
 
 #[allow(unused)]
@@ -191,4 +195,144 @@ fn a4() {
     assert_eq!(Foo - Bar, BarFoo);
 
     println!("ok")
+}
+
+fn a5() {
+    trait Summary {
+        fn summarize(&self) -> String;
+    }
+
+    #[derive(Debug)]
+    struct Post {
+        title: String,
+        author: String,
+        content: String,
+    }
+
+    impl Summary for Post {
+        fn summarize(&self) -> String {
+            format!("The author of post {} is {}", self.title, self.author)
+        }
+    }
+
+    #[derive(Debug)]
+    struct Weibo {
+        username: String,
+        content: String,
+    }
+
+    impl Summary for Weibo {
+        fn summarize(&self) -> String {
+            format!("{} published a weibo {}", self.username, self.content)
+        }
+    }
+
+    let post = Post {
+        title: "Popular Rust".to_string(),
+        author: "Sunface".to_string(),
+        content: "Rust is awesome".to_string(),
+    };
+
+    let weibo = Weibo {
+        username: "Sunface".to_string(),
+        content: "Weibo seem to be worse that Twitter".to_string(),
+    };
+
+    fn summary(item: &impl Summary) {
+        item.summarize();
+    }
+
+    summary(&post);
+    summary(&weibo);
+
+    println!("{:?}", post);
+    println!("{:?}", weibo);
+}
+
+fn a6() {
+    struct Sheep {}
+    struct Cow {}
+
+    trait Animal {
+        fn noise(&self) -> String;
+    }
+
+    impl Animal for Sheep {
+        fn noise(&self) -> String {
+            "baah".to_string()
+        }
+    }
+
+    impl Animal for Cow {
+        fn noise(&self) -> String {
+            "moo".to_string()
+        }
+    }
+
+    // 无意义答案
+    // fn random_animal(random_number: f64) -> impl Animal {
+    //     if random_number < 0.5 {
+    //         Sheep {}
+    //     } else {
+    //         Sheep {}
+    //     }
+    // }
+
+    // 但 Box<dyn> 是下一章的知识
+    fn random_animal(random_number: f64) -> Box<dyn Animal> {
+        if random_number < 0.5 {
+            Box::new(Sheep {})
+        } else {
+            Box::new(Cow {})
+        }
+    }
+
+    let random_number = 0.23;
+    let animal = random_animal(random_number);
+
+    println!(
+        "you've randomly chosen an animal, and it says {}",
+        animal.noise()
+    );
+}
+
+fn a7() {
+    fn sum<T: std::ops::Add<Output = T>>(x: T, y: T) -> T {
+        x + y
+    }
+
+    assert_eq!(sum(1, 2), 3);
+}
+
+fn a8() {
+    struct Pair<T> {
+        x: T,
+        y: T,
+    }
+
+    impl<T> Pair<T> {
+        fn new(x: T, y: T) -> Self {
+            Self { x, y }
+        }
+    }
+
+    impl<T: std::fmt::Debug + PartialOrd> Pair<T> {
+        fn cmp_display(&self) {
+            if self.x >= self.y {
+                println!("the largest member is x = {:?}", self.x);
+            } else {
+                println!("the largest member is y = {:?}", self.y);
+            }
+        }
+    }
+
+    #[derive(PartialEq, PartialOrd, Debug)]
+    struct Unit(i32);
+
+    let pair = Pair {
+        x: Unit(1),
+        y: Unit(3),
+    };
+
+    pair.cmp_display();
 }
